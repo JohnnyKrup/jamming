@@ -12,7 +12,10 @@ class App extends React.Component {
         <div className="App">
           <SearchBar />
           <div className="App-playlist">
-            <TrackList />
+            <div className="SearchResults">
+              <h2>Results</h2>
+              <TrackList />
+            </div>
             <PlayList />
           </div>
         </div>
