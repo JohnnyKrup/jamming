@@ -6,7 +6,10 @@ class Track extends React.Component {
         return (
             <div className="Track">
                 <div className="Track-information">
-                    <h3>{this.props.track.track}</h3>
+                    <div className="Track-title-row">
+                        <img src={this.props.track.image} />
+                        <h3>{this.props.track.track}</h3>
+                    </div>
                     <p>{`${this.props.track.artist} | ${this.props.track.album}`}</p>
                 </div>
                 <a className="Track-action">+</a>
