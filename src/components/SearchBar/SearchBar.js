@@ -5,8 +5,7 @@ class SearchBar extends React.Component{
     constructor(props){
         super(props);
         this.state = {
-            term: '',
-            accessToken: ''
+            term: ''
         };
 
         this.handleSearch = this.handleSearch.bind(this);
@@ -15,16 +14,12 @@ class SearchBar extends React.Component{
 
     handleChange(event){
         this.setState({term: event.target.value});
-        console.log(this.state.term);
+        event.preventDefault();
     }
 
-    handleSearch(event){
-        // if(this.state.accessToken == ''){
-        //     event.
-        // }
+    handleSearch(event){        
         this.props.searchSpotify(this.state.term);
         event.preventDefault();
-        console.log(`Search pressed with the Term: ${this.state.term}`);
     }
 
     render(){

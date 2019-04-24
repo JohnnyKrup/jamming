@@ -6,53 +6,48 @@ import SearchBar from './components/SearchBar/SearchBar';
 import {Spotify} from './util/SpotifySearch';
 
 
-let fakeTrack1 = {
-  album: 'Album Name1',
-  artist: 'Artist Name1',
-  track: 'Track Name1'
+function arrayRemove(arr, value) {
+  return arr.filter(function(ele){
+      return ele != value;
+  });
 }
-
-let fakeTrack2 = {
-  album: 'Album Name2',
-  artist: 'Artist Name2',
-  track: 'Track Name2'
-}
-
-let fakeTrack3 = {
-  album: 'Album Name3',
-  artist: 'Artist Name3',
-  track: 'Track Name3'
-}
-
-let fakePlayListTrack1 = {
-  album: 'Album Name1',
-  artist: 'Artist Name1',
-  track: 'Track Name1'
-}
-
-let fakePlayListTrack2 = {
-  album: 'Album Name2',
-  artist: 'Artist Name2',
-  track: 'Track Name2'
-}
-
-const fakeTrackList = [fakeTrack1, fakeTrack2, fakeTrack3];
-const fakePlayList = [fakePlayListTrack1, fakePlayListTrack2];
 
 class App extends React.Component {
   constructor(props){
     super(props);
 
-    this.state = {trackList: []};
+    this.state = {
+      trackList: [],
+      playList: []
+    };
+
     this.searchSpotify = this.searchSpotify.bind(this);
+    this.addTrackToPlayList = this.addTrackToPlayList.bind(this);
+    this.updatePlayList = this.updatePlayList.bind(this);
+    this.removeTrackFromPlayList = this.removeTrackFromPlayList.bind(this);
   }
 
   searchSpotify(term){
-    //alert('Search App.js');
     Spotify.search(term).then(result => {
+      // keyWord "this" was used, need to bind "this" in the constructor
       this.setState({trackList: result});
-    })
-    
+    })    
+  }
+
+  updatePlayList(playlist){
+    this.setState({playList: playlist});
+  }
+
+  addTrackToPlayList(track){
+    this.state.playList.push(track);
+    this.updatePlayList(this.state.playList);
+    //this.updatePlayList(this.state.playList.push(track));
+  }
+
+  removeTrackFromPlayList(track){
+    this.state.playList = this.state.playList.filter(ele => ele.id != track.id);
+    this.updatePlayList(this.state.playList);
+    // this.updatePlayList(this.state.playList.filter(ele => ele.id != track.id));
   }
 
   render() {
@@ -64,9 +59,15 @@ class App extends React.Component {
           <div className="App-playlist">
             <div className="SearchResults">
               <h2>Results</h2>
-              <TrackList trackList={this.state.trackList}/>
+              <TrackList 
+                trackList={this.state.trackList} 
+                addTrackToPlayList={this.addTrackToPlayList}
+              />
             </div>
-            <PlayList />
+            <PlayList 
+              updatePlayList={this.state.playList}
+              removeTrackFromPlayList={this.removeTrackFromPlayList}
+            />
           </div>
         </div>
       </div>

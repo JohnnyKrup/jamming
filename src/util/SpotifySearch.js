@@ -5,8 +5,10 @@ let accessToken = parsed.access_token;
 
 export const Spotify = {    
 
+    // search albums, artists or tracks from Spotify through Spotify API
     async search(term){
         console.log(accessToken)
+        // check if there is no access token => first login
         if(typeof accessToken === 'undefined'){            
             window.location.replace('http://localhost:8888/login')
         }
@@ -15,6 +17,8 @@ export const Spotify = {
             headers: {Authorization: `Bearer ${accessToken}`}
         });
 
+        // check if there was error on an existing access token
+        // i.e. access token expired
         if(response.status === 401){
             window.location.replace('http://localhost:8888/login')
         }
@@ -33,7 +37,11 @@ export const Spotify = {
                     image: track.album.images[0].url
                 }
             })
-        }
-        
+        }        
+    },
+
+    // Save a PlayList to the users SpotifyAccount via Spotify API
+    savePlayList (playListName, playList){
+        // todo
     }
 }
