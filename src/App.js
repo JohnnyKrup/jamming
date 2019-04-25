@@ -1,16 +1,9 @@
 import React from 'react';
+import queryString from 'query-string';
 import './App.css';
 import TrackList from './components/TrackList/TrackList';
-import PlayList from './components/PlayList/PlayList';
 import SearchBar from './components/SearchBar/SearchBar';
 import {Spotify} from './util/SpotifySearch';
-
-
-function arrayRemove(arr, value) {
-  return arr.filter(function(ele){
-      return ele != value;
-  });
-}
 
 class App extends React.Component {
   constructor(props){
@@ -18,20 +11,48 @@ class App extends React.Component {
 
     this.state = {
       trackList: [],
-      playList: []
+      playList: [],
+      playListName: '',
+      user: {}
     };
 
     this.searchSpotify = this.searchSpotify.bind(this);
+    this.handleChange = this.handleChange.bind(this);
     this.addTrackToPlayList = this.addTrackToPlayList.bind(this);
     this.updatePlayList = this.updatePlayList.bind(this);
     this.removeTrackFromPlayList = this.removeTrackFromPlayList.bind(this);
+    this.savePlaylistToSpotify = this.savePlaylistToSpotify.bind(this);
   }
 
+  componentDidMount(){
+    let parsed = queryString.parse(window.location.search);
+    let accessToken = parsed.access_token;
+    if (!accessToken){
+      return;
+    }
+
+    fetch('https://api.spotify.com/v1/me', 
+    { headers: {'Authorization': 'Bearer ' + accessToken} })
+    .then(response => response.json())
+    .then(data => this.setState({
+      user: {
+        id: data.id,
+        href: data.href,
+        uri: data.uri
+      }
+    }))
+  }
+
+  // search for artist, track or album 
   searchSpotify(term){
     Spotify.search(term).then(result => {
-      // keyWord "this" was used, need to bind "this" in the constructor
       this.setState({trackList: result});
     })    
+  }
+
+  handleChange(event){
+    this.setState({playListName: event.target.value});
+    event.preventDefault();
   }
 
   updatePlayList(playlist){
@@ -41,13 +62,24 @@ class App extends React.Component {
   addTrackToPlayList(track){
     this.state.playList.push(track);
     this.updatePlayList(this.state.playList);
-    //this.updatePlayList(this.state.playList.push(track));
   }
 
   removeTrackFromPlayList(track){
     this.state.playList = this.state.playList.filter(ele => ele.id != track.id);
     this.updatePlayList(this.state.playList);
-    // this.updatePlayList(this.state.playList.filter(ele => ele.id != track.id));
+  }
+
+  savePlaylistToSpotify(){
+    if(this.state.user && this.state.playListName && this.state.playList){
+      Spotify.savePlayList(this.state.user, this.state.playListName, this.state.playList);
+      this.setState(
+        {
+          playList: [], 
+          playListName: ''
+        }
+      );
+    }
+    
   }
 
   render() {
@@ -64,10 +96,15 @@ class App extends React.Component {
                 addTrackToPlayList={this.addTrackToPlayList}
               />
             </div>
-            <PlayList 
-              updatePlayList={this.state.playList}
-              removeTrackFromPlayList={this.removeTrackFromPlayList}
-            />
+            <div className="Playlist">
+                <input type="text" name="PlayList" value={this.state.playListName} placeholder='New Playlist' onChange={this.handleChange} />
+                <TrackList 
+                  updatePlayList={this.state.playList}
+                  removeTrackFromPlayList={this.removeTrackFromPlayList}              
+                />
+                <a className="Playlist-save" onClick={this.savePlaylistToSpotify} >SAVE TO SPOTIFY</a>
+            </div>
+            
           </div>
         </div>
       </div>
