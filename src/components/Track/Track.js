@@ -17,6 +17,11 @@ class Track extends React.Component {
             album: this.props.track.album
         };
 
+        /* 
+        based on the track action button it is determined if a track gets added
+        to the playList or if the current track is a playList track an needs to 
+        be removed from the current playList
+        */
         if(this.props.button === '+'){
             this.props.addTrackToPlayList(track)
         }

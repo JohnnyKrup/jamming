@@ -6,8 +6,6 @@ class TrackList extends React.Component{
     
     createTrackList() {
         if(this.props.trackList){
-            // console.log('SearchList:')
-            // console.log(this.props.trackList);
             return this.props.trackList.map((track, i) => {
                 return <Track 
                             track={track} 
@@ -21,8 +19,6 @@ class TrackList extends React.Component{
 
     createPlayList(){
         if(this.props.updatePlayList){
-            // console.log('Updated PlayList:')
-            // console.log(this.props.updatePlayList);
             return this.props.updatePlayList.map((track, i) => {
                 return <Track 
                             track={track} 

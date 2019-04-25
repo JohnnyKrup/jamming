@@ -14,11 +14,19 @@ export const Spotify = {
 
     // search albums, artists or tracks from Spotify through Spotify API
     async search(term){
+
+        // if no search term was given, abort the search
+        if(term === '' || term == null){
+            return;
+        }
+
         // check if there is no access token => first login        
         if(typeof accessToken === 'undefined'){
             checkAccessToken();
         }
 
+        // search for tracks, since it contains ablbums and artists
+        // limit search results to 5 results
         const response = await fetch(`https://api.spotify.com/v1/search?q=${term}&type=track&limit=5`, {
             headers: {Authorization: `Bearer ${accessToken}`}
         });
@@ -29,6 +37,7 @@ export const Spotify = {
             checkAccessToken();
         }
 
+        // get the array with the search results
         const jsonResponse = await response.json();
         if(typeof jsonResponse.tracks.items !== 'undefined'){
             return jsonResponse.tracks.items.map(track => {
@@ -43,72 +52,14 @@ export const Spotify = {
         }        
     },
 
-/*     async createNewPlayList(user, playListName){
-        await fetch(`https://api.spotify.com/v1/users/${user.id}/playlists`, {
-            headers: {Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json'},
-            method: 'POST',
-            body: JSON.stringify({
-                name: playListName,
-                public: false
-            })
-        }).then(res => res.json())
-        .then(response => console.log('Success:', JSON.stringify(response)))
-        .catch(error => console.error('Error:', error));
-    },
-
-    async getPlayListID(playListName){
-        const response = await fetch(`https://api.spotify.com/v1/me/playlists`, {
-            headers: {Authorization: `Bearer ${accessToken}`}
-        })
-        
-        const jsonResponse = await response.json();
-        if(jsonResponse)
-        {
-            let id;
-            jsonResponse(data => {
-                if(data.name == playListName){
-                    return id = data.id;
-                }
-            })
-            return id;
-        }        
-    },
-
- // Save a PlayList to the users SpotifyAccount via Spotify API
- async savePlayList (user, playListName, playList){
-    // check if there is no access token => first login
-    if(typeof accessToken === 'undefined'){
-        accessToken();
-    }
-
-    console.log('User ID: ', user.id);
-    // Create a new playlist
-    Spotify.createNewPlayList(user);
-    
-    // get current users playlists and filter the id of the newly created playlist
-    let playListID = Spotify.getPlayListID(playListName);
-    console.log('PlayList ID: ', playListID);
-
-    // create an array of track uris
-    const uris = playList.map(track => {
-        return `spotify:track:${track.id}`;
-    });
-
-    console.log('uris: ', uris);
-
-    await fetch(`https://api.spotify.com/v1/playlists/${playListID}/tracks`, {
-        headers: {Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json'},
-        method: 'POST',
-        body: JSON.stringify({
-            uris: uris
-        })
-    }).then(res => res.json())
-    .then(response => console.log('Success:', JSON.stringify(response)))
-    .catch(error => console.error('Error:', error));    
-} */
-
+    // save the playlist to the current users Spotify account
     async savePlayList(user, playListName, playList){
-        console.log(accessToken)
+        // if one of the params is not defined, abort the process
+        if(typeof user == 'undefined' || typeof playListName == 'undefined' || typeof playList == 'undefined'){
+            console.log('missing save criteria, save aborted!');
+            return;
+        }
+
         // check if there is no access token => first login
         if(typeof accessToken === 'undefined'){
             accessToken();
@@ -135,11 +86,7 @@ export const Spotify = {
             return `spotify:track:${track.id}`;
         });
 
-        console.log('uris: ', uris);
-        console.log('PL: ', pl);
-        console.log('PL_ID: ', pl.id);
-
-        //await save tracks to PL(ID)
+        // save tracks to PL(ID)
         await fetch(`https://api.spotify.com/v1/playlists/${pl.id}/tracks`, {
             headers: {Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json'},
             method: 'POST',

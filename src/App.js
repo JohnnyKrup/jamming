@@ -31,6 +31,7 @@ class App extends React.Component {
       return;
     }
 
+    // get the user data of the users Spotify account
     fetch('https://api.spotify.com/v1/me', 
     { headers: {'Authorization': 'Bearer ' + accessToken} })
     .then(response => response.json())
@@ -70,8 +71,9 @@ class App extends React.Component {
   }
 
   savePlaylistToSpotify(){
-    if(this.state.user && this.state.playListName && this.state.playList){
+    if(this.state.user !== null && this.state.playListName !== null && this.state.playList !== null){
       Spotify.savePlayList(this.state.user, this.state.playListName, this.state.playList);
+      // after the save is complete, clear the playList array and the playList name
       this.setState(
         {
           playList: [], 
