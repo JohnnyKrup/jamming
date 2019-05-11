@@ -1,10 +1,11 @@
 import queryString from 'query-string';
-import { create } from 'domain';
 
 let parsed = queryString.parse(window.location.search);
 let accessToken = parsed.access_token;
+// 04.05 stored the base API url into a variable to reduce repetition of url writing in code
+let apiURL = 'https://api.spotify.com/v1/';
 
-function checkAccessToken(){           
+function checkAccessToken(){               
     window.location.href.includes('localhost') 
         ? window.location.replace('http://localhost:8888/login')
         : window.location.replace('https://jamming-backend.herokuapp.com/login')
@@ -27,7 +28,7 @@ export const Spotify = {
 
         // search for tracks, since it contains ablbums and artists
         // limit search results to 5 results
-        const response = await fetch(`https://api.spotify.com/v1/search?q=${term}&type=track&limit=5`, {
+        const response = await fetch(`${apiURL}search?q=${term}&type=track&limit=5`, {
             headers: {Authorization: `Bearer ${accessToken}`}
         });
 
@@ -66,7 +67,7 @@ export const Spotify = {
         }
 
         //createPL and return playlist
-        const pl = await fetch(`https://api.spotify.com/v1/users/${user.id}/playlists`, {
+        const pl = await fetch(`${apiURL}users/${user.id}/playlists`, {
             headers: {Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json'},
             method: 'POST',
             body: JSON.stringify({
@@ -87,7 +88,7 @@ export const Spotify = {
         });
 
         // save tracks to PL(ID)
-        await fetch(`https://api.spotify.com/v1/playlists/${pl.id}/tracks`, {
+        await fetch(`${apiURL}playlists/${pl.id}/tracks`, {
             headers: {Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json'},
             method: 'POST',
             body: JSON.stringify({

@@ -4,25 +4,27 @@ import Track from '../Track/Track';
 
 class TrackList extends React.Component{
     
+    // 04.05 added the track.id as the key of each track element to identify the track
     createTrackList() {
         if(this.props.trackList){
-            return this.props.trackList.map((track, i) => {
+            return this.props.trackList.map((track) => {
                 return <Track 
                             track={track} 
-                            key={i} 
+                            key={track.id} 
                             addTrackToPlayList={this.props.addTrackToPlayList}
                             button={'+'}
                         />;
             });
         }
     }
-
+    
+    // 04.05 added the track.id as the key of each track element to identify the track
     createPlayList(){
         if(this.props.updatePlayList){
             return this.props.updatePlayList.map((track, i) => {
                 return <Track 
                             track={track} 
-                            key={i} 
+                            key={track.id} 
                             removeTrackFromPlayList={this.props.removeTrackFromPlayList}
                             button={'-'}
                         />

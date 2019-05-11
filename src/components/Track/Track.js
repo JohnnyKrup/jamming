@@ -36,15 +36,20 @@ class Track extends React.Component {
             <div className="Track">
                 <div className="Track-information">
                     <div className="Track-title-row">
-                        <img src={this.props.track.image} />
-                        <h3>{this.props.track.track}</h3>
-                    </div>
-                    <p>{`${this.props.track.artist} | ${this.props.track.album}`}</p>
+                        <iframe src={`https://open.spotify.com/embed/track/${this.props.track.id}`}
+                                allowtransparency="true" 
+                                allow="encrypted-media">
+                        </iframe> 
+                        <div>
+                            <h3>{this.props.track.track}</h3>
+                            <p>{`${this.props.track.artist} | ${this.props.track.album}`}</p>
+                        </div>
+                    </div>                    
                 </div>
                 <a className="Track-action" onClick={this.handleClick}>{this.props.button}</a>
             </div>
         );
-    }
+    }    
 }
 
 export default Track;
